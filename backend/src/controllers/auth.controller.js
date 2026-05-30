@@ -7,7 +7,6 @@ import { ENV } from '../lib/env.js';
 export async function register(req,res) {
     try{
         const {username,email,cgpa,password,rollNo,year,role}=req.body;
-        console.log(username);
         const existingUser=await User.findOne({email});
         if(existingUser){
             return res.status(400).send({message:"Email already existed"});
@@ -29,7 +28,7 @@ export async function register(req,res) {
         await newUser.save();   
         res.status(201).send({
             message:"Register Successfully",
-            User:{id:newUser._id,name:newUser.name,email:newUser.email,role:newUser.role}
+            User:{id:newUser._id,name:newUser.username,email:newUser.email,role:newUser.role}
 
         })
     }
@@ -54,7 +53,7 @@ export async function login(req,res){
         }
         const isPasswordCorrect=await bcrypt.compare(password,user.password);
         if(!isPasswordCorrect){
-            res.status(400).send({message:"Invalid Email or Password"});
+           return res.status(400).send({message:"Invalid Email or Password"});
         }
 
         const token=jwt.sign(

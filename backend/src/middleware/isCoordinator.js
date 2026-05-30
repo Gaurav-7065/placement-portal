@@ -7,3 +7,4 @@ const isCoordinator=(req,res,next)=>{
         return res.status(403).json({message:"Access Denied"});
     }
 }
+export default isCoordinator;
