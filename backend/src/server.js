@@ -6,11 +6,12 @@ import { ENV } from './lib/env.js';
 
 import authRoutes from './routes/auth.routes.js'
 import verifyToken from './middleware/verifyToken.js';
-
+import jobRoutes from './routes/job.routes.js'
 dotenv.config(); 
 app.use(express.json());
 app.use('/api/auth',authRoutes)
-
+// post job
+app.use('/api/jobs',jobRoutes)
 app.get('/api/test',verifyToken,(req,res)=>{
 
     res.status(200).send({message:"successfull"});
