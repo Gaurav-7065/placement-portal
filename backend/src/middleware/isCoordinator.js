@@ -1,6 +1,6 @@
 const isCoordinator=(req,res,next)=>{
      
-    if(req.user&&req.user=='coordinator'){
+    if(req.user&&req.user.role=='coordinator'){
         next();
     }
     else{
