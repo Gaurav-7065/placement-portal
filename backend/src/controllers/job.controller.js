@@ -50,15 +50,15 @@ export async function getJobs(req,res) {
             const yearOk=job.allowedYears.includes(student.year);
             const eligible=cgpaOk&&yearOk
 
-            let inelligibleReason="";
+            let ineligibleReason="";
             if(!eligible){
                 const reasons=[];
                 if(!cgpaOk) reasons.push(`Your CGPA (${student.cgpa}) is below the required ${job.minCgpa}`);
                 if(!yearOk) reasons.push(`Your current year (${student.year}) is not eligible. Allowed years: ${job.allowedYears.join(', ')}`);
-                inelligibleReason=reasons.join(" AND ");
+                ineligibleReason=reasons.join(" AND ");
             }
             return {
-                ...job._doc,eligible,inelligibleReason
+                ...job._doc,eligible,ineligibleReason
             }
         })
         res.status(200).json(customizedJobs);
@@ -75,32 +75,32 @@ export async function getJobById(req,res){
     try{
         const job=await Job.findById(req.params.id);
         if(!job){
-            return res.status(44).send({message:"Job placement Drive not found"});
+            return res.status(404).send({message:"Job placement Drive not found"});
         }
-        const student=User.findById(req.user.id);
+        const student=await User.findById(req.user.id);
         if(!student){
-            return res.status(44).send({message:"Student record not found"});
+            return res.status(404).send({message:"Student record not found"});
         }
 
         const cgpaOk=student.cgpa>=job.minCgpa;
         const yearOk=job.allowedYears.includes(student.year);
         const eligible= cgpaOk&&yearOk;
 
-        let inelligibleReason="";
+        let ineligibleReason="";
         if(!eligible){
             const reasons=[];
             if(!cgpaOk) reasons.push(`Requires minimum CGPA of ${job.minCgpa}`);
             if(!yearOk) reasons.push(`Your year is not eligible`);
-            inelligibleReason=reasons.join("AND");
+            ineligibleReason=reasons.join("AND");
         }
         res.status(200).send({
             ...job._doc,
             eligible,
-            inelligibleReason
+            ineligibleReason
         })
     }
     catch (error) {
-    res.status(50).json({ message: "Error fetching job item", error: error.message });
+    res.status(500).json({ message: "Error fetching job item", error: error.message });
   }
 }
 
