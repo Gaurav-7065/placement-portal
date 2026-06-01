@@ -1,5 +1,5 @@
 import Job from "../modals/Job.js";
-
+import User from '../modals/User.js'
 export async function createJob(req,res){
 
     try{
@@ -30,6 +30,82 @@ export async function createJob(req,res){
 
 }
 
+//FETCH ALL JOBS WITH ELIGIBILITY CHECKS
+export async function getJobs(req,res) {
+    try{
+        const jobs=await Job.find();
+
+        const student=await User.findById(req.user.id);
+        if(!student){
+            return res.status(401).send({message:"Student record  not found"});
+        }
+        
+        const customizedJobs=jobs.map(job=>{
+
+            if(req.user.role==='coordinator'){
+                return {...job._doc,eligible:true,inelligibleReason:"Coordinators have full view access"}
+            }
+
+            const cgpaOk=student.cgpa>=job.minCgpa;
+            const yearOk=job.allowedYears.includes(student.year);
+            const eligible=cgpaOk&&yearOk
+
+            let ineligibleReason="";
+            if(!eligible){
+                const reasons=[];
+                if(!cgpaOk) reasons.push(`Your CGPA (${student.cgpa}) is below the required ${job.minCgpa}`);
+                if(!yearOk) reasons.push(`Your current year (${student.year}) is not eligible. Allowed years: ${job.allowedYears.join(', ')}`);
+                ineligibleReason=reasons.join(" AND ");
+            }
+            return {
+                ...job._doc,eligible,ineligibleReason
+            }
+        })
+        res.status(200).json(customizedJobs);
+
+    }
+    catch (error) {
+    res.status(500).json({ message: "Error fetching jobs", error: error.message });
+  } 
+    
+}
+
+// FETCH A SINGLE JOB BY ID WITH ELIGIBILITY
+export async function getJobById(req,res){
+    try{
+        const job=await Job.findById(req.params.id);
+        if(!job){
+            return res.status(404).send({message:"Job placement Drive not found"});
+        }
+        const student=await User.findById(req.user.id);
+        if(!student){
+            return res.status(404).send({message:"Student record not found"});
+        }
+
+        const cgpaOk=student.cgpa>=job.minCgpa;
+        const yearOk=job.allowedYears.includes(student.year);
+        const eligible= cgpaOk&&yearOk;
+
+        let ineligibleReason="";
+        if(!eligible){
+            const reasons=[];
+            if(!cgpaOk) reasons.push(`Requires minimum CGPA of ${job.minCgpa}`);
+            if(!yearOk) reasons.push(`Your year is not eligible`);
+            ineligibleReason=reasons.join("AND");
+        }
+        res.status(200).send({
+            ...job._doc,
+            eligible,
+            ineligibleReason
+        })
+    }
+    catch (error) {
+    res.status(500).json({ message: "Error fetching job item", error: error.message });
+  }
+}
+
 export const jobController={
-    createJob
+    createJob,
+    getJobs,
+    getJobById
 }
