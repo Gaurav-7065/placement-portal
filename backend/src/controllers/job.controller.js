@@ -15,13 +15,13 @@ export async function createJob(req,res){
              postedBy:req.user.id
         })
 
-        res.status(200).send({
+        res.status(200).json({
             message:"Placement drive created successfully! 🚀",
             job:newJob
         })
     }
     catch(error){
-        res.status(500).send({
+        res.status(500).json({
             message:"Failed to create placement job drive",
             error:error.message
         });
@@ -37,7 +37,7 @@ export async function getJobs(req,res) {
 
         const student=await User.findById(req.user.id);
         if(!student){
-            return res.status(401).send({message:"Student record  not found"});
+            return res.status(401).json({message:"Student record  not found"});
         }
         
         const customizedJobs=jobs.map(job=>{
@@ -75,11 +75,11 @@ export async function getJobById(req,res){
     try{
         const job=await Job.findById(req.params.id);
         if(!job){
-            return res.status(404).send({message:"Job placement Drive not found"});
+            return res.status(404).json({message:"Job placement Drive not found"});
         }
         const student=await User.findById(req.user.id);
         if(!student){
-            return res.status(404).send({message:"Student record not found"});
+            return res.status(404).json({message:"Student record not found"});
         }
 
         const cgpaOk=student.cgpa>=job.minCgpa;
@@ -93,7 +93,7 @@ export async function getJobById(req,res){
             if(!yearOk) reasons.push(`Your year is not eligible`);
             ineligibleReason=reasons.join("AND");
         }
-        res.status(200).send({
+        res.status(200).json({
             ...job._doc,
             eligible,
             ineligibleReason
