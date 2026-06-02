@@ -7,11 +7,15 @@ import { ENV } from './lib/env.js';
 import authRoutes from './routes/auth.routes.js'
 import verifyToken from './middleware/verifyToken.js';
 import jobRoutes from './routes/job.routes.js'
+import applyRoutes from './routes/application.route.js'
 dotenv.config(); 
 app.use(express.json());
-app.use('/api/auth',authRoutes)
+// Authoriztion
+app.use('/api/auth',authRoutes);
 // post job
-app.use('/api/jobs',jobRoutes)
+app.use('/api/jobs',jobRoutes);
+// apply for jobs
+app.use('/api/application',applyRoutes);
 app.get('/api/test',verifyToken,(req,res)=>{
 
     res.status(200).send({message:"successfull"});
