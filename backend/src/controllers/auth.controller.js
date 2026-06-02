@@ -9,7 +9,7 @@ export async function register(req,res) {
         const {username,email,cgpa,password,rollNo,year,role}=req.body;
         const existingUser=await User.findOne({email});
         if(existingUser){
-            return res.status(400).send({message:"Email already existed"});
+            return res.status(400).json({message:"Email already existed"});
         }
 
         const salt=await bcrypt.genSalt(10);
@@ -26,14 +26,14 @@ export async function register(req,res) {
         })
 
         await newUser.save();   
-        res.status(201).send({
+        res.status(201).json({
             message:"Register Successfully",
             User:{id:newUser._id,name:newUser.username,email:newUser.email,role:newUser.role}
 
         })
     }
     catch(error){
-        res.status(500).send({
+        res.status(500).json({
             message:"Internal Server error during registration",error:error.message
 
         })
@@ -49,11 +49,11 @@ export async function login(req,res){
 
         const user=await User.findOne({email});
         if(!user){
-            return res.status(400).send({message:"Invalid Email or Password"});
+            return res.status(400).json({message:"Invalid Email or Password"});
         }
         const isPasswordCorrect=await bcrypt.compare(password,user.password);
         if(!isPasswordCorrect){
-           return res.status(400).send({message:"Invalid Email or Password"});
+           return res.status(400).json({message:"Invalid Email or Password"});
         }
 
         const token=jwt.sign(
@@ -63,7 +63,7 @@ export async function login(req,res){
             {expiresIn:'1d'}
         )
 
-        res.status(200).send({
+        res.status(200).json({
             message:"Login Successfully",
             token,
             user:{
