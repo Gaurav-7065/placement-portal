@@ -44,11 +44,11 @@ export async function applyJob(req,res) {
         res.status(500).json({ message: "Error processing job application", error: error.message });
     }
 }
-
+// Get my application
 export async function getMyApplication(req,res) {
     try{
         const applications=await Application.find({studentId:req.user.id})
-        .populate({path:"jobId",select:"companyName role,ctc,deadline"}).
+        .populate({path:"jobId",select:"companyName role ctc deadline"}).
         sort({createdAt:-1});
 
         res.status(200).json({
