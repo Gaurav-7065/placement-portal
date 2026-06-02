@@ -15,7 +15,7 @@ app.use('/api/auth',authRoutes);
 // post job
 app.use('/api/jobs',jobRoutes);
 // apply for jobs
-app.use('/api/application',applyRoutes);
+app.use('/api/applications',applyRoutes);
 app.get('/api/test',verifyToken,(req,res)=>{
 
     res.status(200).send({message:"successfull"});
