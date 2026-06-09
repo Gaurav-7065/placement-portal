@@ -20,8 +20,10 @@ export default function App() {
     <>
       <AuthProvider>
         <Routes>
-          <Route path="/login" element={<Login />}></Route>
           <Route path="/signup" element={<SignUp />}></Route>
+          <Route path="/login" element={<Login />}></Route>
+          <Route path="/" element={<Navigate to='/signup' replace/>}/>
+          
 
           {/* Private Authenticated route guard by ProtectRoute */}
           <Route element={<ProtectRoute />}>

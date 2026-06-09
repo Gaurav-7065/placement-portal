@@ -2,7 +2,7 @@ import React from 'react'
 
 function AdminJobs() {
   return (
-    <div>AdminJobs</div>
+    <div className='bg-red-500'>AdminJobs</div>
   )
 }
 

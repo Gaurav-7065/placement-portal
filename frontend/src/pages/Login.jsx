@@ -1,9 +1,58 @@
-import React, { useState } from 'react';
-import { GraduationCap, User, Users, Mail, Lock, ArrowRight, Zap, Tablet } from 'lucide-react';
+import React, { useContext, useState } from 'react';
+import { GraduationCap, User, Users, Mail, Lock, ArrowRight, Zap, Tablet, FastForward } from 'lucide-react';
+import { AuthContext } from '../context/AuthContext';
+import { useLocation, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 export const Login = () => {
     // State to toggle layout dynamically based on role selection
     const [role, setRole] = useState('student');
+    const {login} = useContext(AuthContext);
+    const navigate = useNavigate();
+    const location=useLocation();
+
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
+    const registerSuccess = location.state?.registerSuccess;
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setError('');
+        setLoading(true);
+
+
+        try {
+            const payload = {
+                email,
+                password,
+                role
+            }
+            const response = await axios.post('http://localhost:3000/api/auth/login', payload);
+
+            const { user, token } = response.data;
+            // save this on localStorage
+            login(user, token);
+
+            if (user.role === 'coordinator') {
+                navigate('/admin/jobs');
+            }
+            else {
+                navigate('/jobs');
+            }
+
+
+        }
+        catch (error) {
+            setError(error.response?.data?.message || 'Invalid email or password credentials.');
+        }
+        finally {
+            setLoading(false);
+        }
+
+    };
+
 
     return (
         <div className="min-h-screen flex bg-slate-50 antialiased font-sans">
@@ -49,15 +98,32 @@ export const Login = () => {
                         </button>
                     </div>
 
+                    {/* Registration Success Banner */}
+
+                    {/* Registration Success Banner */}
+                    {registerSuccess && (
+                        <div className="mt-4 p-3 bg-emerald-50 text-emerald-700 border border-emerald-100 rounded-xl text-xs font-bold">
+                            🎉 Registration successful! Log in with your new credentials.
+                        </div>
+                    )}
+
+                    {error && (
+                        <div className="mt-4 p-3 bg-red-50 text-red-600 border border-red-100 rounded-xl text-xs font-semibold">
+                            ⚠️ {error}
+                        </div>
+                    )}
+                  
+
                     {/* Input Forms Body */}
-                    <form className="mt-5 flex flex-col gap-3.5">
+                    <form className="mt-5 flex flex-col gap-3.5" onSubmit={handleSubmit}>
 
                         {/* Field 1: Email */}
                         <div className="flex flex-col gap-1">
                             <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Email Address</label>
                             <div className="flex items-center border border-slate-200/80 focus-within:border-violet-500 rounded-xl px-3 py-2 bg-slate-50/50 transition-colors">
                                 <Mail size={16} className="text-slate-400" />
-                                <input type="email" placeholder="name@university.edu" className="ml-2.5 text-xs font-medium w-full bg-transparent outline-none text-slate-700" required />
+                                <input type="email" placeholder="name@university.edu" className="ml-2.5 text-xs font-medium w-full bg-transparent outline-none text-slate-700" required
+                                    onChange={(e) => setEmail(e.target.value)} />
                             </div>
                         </div>
 
@@ -69,7 +135,8 @@ export const Login = () => {
                             </div>
                             <div className="flex items-center border border-slate-200/80 focus-within:border-violet-500 rounded-xl px-3 py-2 bg-slate-50/50 transition-colors">
                                 <Lock size={16} className="text-slate-400" />
-                                <input type="password" placeholder="Enter your password" className="ml-2.5 text-xs font-medium w-full bg-transparent outline-none text-slate-700" required />
+                                <input type="password" placeholder="Enter your password" className="ml-2.5 text-xs font-medium w-full bg-transparent outline-none text-slate-700" required
+                                    onChange={(e) => setPassword(e.target.value)} />
                             </div>
                         </div>
 
@@ -80,9 +147,14 @@ export const Login = () => {
                         </div>
 
                         {/* Submit Button */}
-                        <button type="submit" className="btn bg-violet-600 hover:bg-violet-700 text-white border-none w-full rounded-xl text-xs font-bold tracking-wide shadow-md mt-2 cursor-pointer flex items-center justify-center gap-2 h-10 min-h-10">
-                            Sign In
-                            <ArrowRight size={14} />
+                        <button type="submit" disabled={loading} className="btn bg-violet-600 hover:bg-violet-700 text-white border-none w-full rounded-xl text-xs font-bold tracking-wide shadow-md mt-2 cursor-pointer flex items-center justify-center gap-2 h-10 min-h-10">
+                            {loading ? <span className='loading loading-spinner loading-xs'></span> :
+                                <>
+                                    Sign In
+                                    <ArrowRight size={14} />
+                                </>
+                            }
+
                         </button>
 
                     </form>
@@ -94,7 +166,7 @@ export const Login = () => {
             <div className="hidden lg:flex lg:w-1/2 bg-violet-600 ">
                 <div className='mt-24 px-8 '>
                     <div>
-                        <h3 className='font-bold text-4xl font-sans text-gray-100 mb-4'>Welcome back to<br/> NexusDrive</h3>
+                        <h3 className='font-bold text-4xl font-sans text-gray-100 mb-4'>Welcome back to<br /> NexusDrive</h3>
                         <p className='text-slate-200 text-xs font-medium'>Connect with top companies and launch your carrier</p>
                     </div>
                     <div className='mt-24 space-y-4'>
@@ -112,7 +184,7 @@ export const Login = () => {
                                 </p>
                             </div>
                         </div>
-                        
+
                         {/* card-2 */}
                         <div className='bg-white/10 shadow-lg w-85 px-8 py-4 rounded-2xl text-slate-50 flex items-center gap-3 ml-16'>
                             <div className='rounded-full bg-white/10 p-2'>
@@ -127,7 +199,7 @@ export const Login = () => {
                                 </p>
                             </div>
                         </div>
-                        
+
                         {/* Card-3 */}
                         <div className='bg-white/10 shadow-lg w-85 px-8 py-4 rounded-2xl text-slate-50 flex items-center gap-3'>
                             <div className='rounded-full bg-white/10 p-2'>
