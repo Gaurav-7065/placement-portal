@@ -147,7 +147,7 @@ export const Login = () => {
                         </div>
 
                         {/* Submit Button */}
-                        <button type="submit" className="btn bg-violet-600 hover:bg-violet-700 text-white border-none w-full rounded-xl text-xs font-bold tracking-wide shadow-md mt-2 cursor-pointer flex items-center justify-center gap-2 h-10 min-h-10">
+                        <button type="submit" disabled={loading} className="btn bg-violet-600 hover:bg-violet-700 text-white border-none w-full rounded-xl text-xs font-bold tracking-wide shadow-md mt-2 cursor-pointer flex items-center justify-center gap-2 h-10 min-h-10">
                             {loading ? <span className='loading loading-spinner loading-xs'></span> :
                                 <>
                                     Sign In
