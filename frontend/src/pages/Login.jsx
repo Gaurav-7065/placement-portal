@@ -2,7 +2,8 @@ import React, { useContext, useState } from 'react';
 import { GraduationCap, User, Users, Mail, Lock, ArrowRight, Zap, Tablet, FastForward } from 'lucide-react';
 import { AuthContext } from '../context/AuthContext';
 import { useLocation, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+
+import { loginUser } from '../api/auth';
 
 export const Login = () => {
     // State to toggle layout dynamically based on role selection
@@ -27,14 +28,15 @@ export const Login = () => {
             const payload = {
                 email,
                 password,
-                role
             }
-            const response = await axios.post('http://localhost:3000/api/auth/login', payload);
-
-            const { user, token } = response.data;
+            console.log(payload);
+            const response = await loginUser(payload);
+            
+            const { user, token } = response;
             // save this on localStorage
             login(user, token);
-
+            
+            setError('');
             if (user.role === 'coordinator') {
                 navigate('/admin/jobs');
             }

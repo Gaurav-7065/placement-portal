@@ -4,6 +4,8 @@ import { Login } from './Login';
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 
+import { registerUser } from '../api/auth';
+
 export const SignUp = () => {
     // State to toggle form layout dynamically based on role selection
     const [role, setRole] = useState('student');
@@ -32,14 +34,15 @@ export const SignUp = () => {
         }
 
         if (role === 'student') {
-            payload.rollNo = rollNo,
-                payload.currentYear = parseInt(currentYear),
-                payload.cgpa = parseFloat(cgpa)
+            payload.rollNo = rollNo;
+            payload.currentYear = parseInt(currentYear);
+            payload.cgpa = parseFloat(cgpa);
 
         }
 
         try {
-            await axios.post('http://localhost:3000/api/auth/register', payload);
+            await registerUser(payload);
+            setError('');
             navigate('/login', { state: { registerSuccess: true } });
         }
         catch (err) {
@@ -94,6 +97,14 @@ export const SignUp = () => {
                             Coordinator
                         </button>
                     </div>
+
+                    {/* error */}
+                    {error && (
+                        <div className="mt-4 p-3 bg-red-50 text-red-600 border border-red-100 rounded-xl text-xs font-semibold">
+                            ⚠️ {error}
+                        </div>
+                    )}
+
 
                     {/* Input Forms Body */}
 
