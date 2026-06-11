@@ -6,9 +6,9 @@ export const getAllJobs=async ()=>{
     return response.data;
     
 }
-export const getJobById=async ()=>{
-
-    const response=await API.get(`/jobs:/${id}`);
+export const getJobById=async (id)=>{
+    const response=await API.get(`/jobs/${id}`);
+    console.log(response.data);
     return response.data;
 }
 

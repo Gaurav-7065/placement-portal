@@ -5,16 +5,17 @@ export async function applyJob(req,res) {
 
     try{
         const {jobId}=req.body;
+        
     if(!jobId){
         return res.status(400).json({message:"Job Id is required to Apply"});
     }
-
+    
     // 2. DEFENSIVE GUARD: Check if the string structure is structurally valid hex
     if(!mongoose.Types.ObjectId.isValid(jobId)){
         return res.status(400).json({ message: "Invalid Job ID format format!" });
     }
     const jobExist=await Job.findById(jobId);
-    console.log(jobExist);
+    
     if(!jobExist){
        return res.status(404).json({message:"The job placement drive does not exist"});
     }
@@ -23,6 +24,7 @@ export async function applyJob(req,res) {
         studentId:req.user.id,
         jobId:jobId
     });
+    console.log(req.user.id);
 
     if(alreadyApplied){
       return  res.status(400).json({message:"You have already applied to this job placement drive"});
@@ -33,6 +35,7 @@ export async function applyJob(req,res) {
         studentId:req.user.id,
         status:"Applied"
     });
+    console.log(newApplication);
 
     res.status(201).json({
         message:"Application submitted successfully",

@@ -74,6 +74,7 @@ export async function getJobs(req,res) {
 export async function getJobById(req,res){
     try{
         const job=await Job.findById(req.params.id);
+            
         if(!job){
             return res.status(404).json({message:"Job placement Drive not found"});
         }
@@ -81,7 +82,7 @@ export async function getJobById(req,res){
         if(!student){
             return res.status(404).json({message:"Student record not found"});
         }
-
+        
         const cgpaOk=student.cgpa>=job.minCgpa;
         const yearOk=job.allowedYears.includes(student.year);
         const eligible= cgpaOk&&yearOk;
