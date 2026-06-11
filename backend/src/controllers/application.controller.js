@@ -2,8 +2,7 @@ import mongoose from "mongoose";
 import Application from "../modals/Application.js";
 import Job from "../modals/Job.js";
 export async function applyJob(req,res) {
-    console.log("request arrived");
-    console.log(req.body);
+
     try{
         const {jobId}=req.body;
         

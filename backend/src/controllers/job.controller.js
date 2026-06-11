@@ -74,7 +74,7 @@ export async function getJobs(req,res) {
 export async function getJobById(req,res){
     try{
         const job=await Job.findById(req.params.id);
-        console.log(job);
+            
         if(!job){
             return res.status(404).json({message:"Job placement Drive not found"});
         }
