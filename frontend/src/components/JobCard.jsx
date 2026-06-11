@@ -1,11 +1,18 @@
 import React from 'react';
+import {useNavigate} from 'react-router-dom'
 import { Briefcase, MapPin, DollarSign, AlertCircle } from 'lucide-react';
 
 export const JobCard = ({ job }) => {
+    const navigate=useNavigate();
     const isEligible = job.eligible === true;
 
     return (
         <div 
+            onClick={()=>{
+                if(isEligible){
+                    navigate(`/jobs/${job._id||job.id}`);
+                }
+            }}
             className={`transition-all duration-200 border-2 rounded-2xl p-5 bg-white relative
                 ${isEligible 
                     ? 'border-violet-100 shadow-sm hover:shadow-md cursor-pointer opacity-100' 

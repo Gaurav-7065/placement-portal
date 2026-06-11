@@ -2,7 +2,7 @@ import { API } from "./axiosInstance";
 
 export const applyToJob=async(JobId)=>{
 
-    const response=await API.post('/applications',JobId);
+    const response=await API.post('/applications',{jobId:JobId});
     return  response.data;
 }
 
