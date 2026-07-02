@@ -142,6 +142,7 @@ export async function JobStatus(req, res) {
                 runValidators: true
             }
         );
+        console.log(updatedApplication);
         if (!updatedApplication) {
             return res.status(401).json({
                 success: false,
@@ -177,6 +178,8 @@ export async function getApplicantByJob(req, res) {
         const Applicants = await Application.find({ jobId })
             .populate('studentId', 'username email role')
             .sort({ createdAt: -1 });
+        
+        
 
 
         return res.status(200).json({
